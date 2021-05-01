@@ -47,6 +47,7 @@ public:
 	Q_INVOKABLE bool		columnUsedInEasyFilter(int column)		const				{ return DataSetPackage::pkg()->isColumnUsedInEasyFilter(column);					}
 	Q_INVOKABLE void		resetAllFilters()											{		 DataSetPackage::pkg()->resetAllFilters();									}
 	Q_INVOKABLE int			setColumnTypeFromQML(int columnIndex, int newColumnType)	{ return DataSetPackage::pkg()->setColumnTypeFromQML(columnIndex, newColumnType);	}
+	Q_INVOKABLE void		resizeData(int row, int col)								{		 DataSetPackage::pkg()->resizeData(row, col);							}
 
 	columnType				getColumnType(size_t column)			const				{ return DataSetPackage::pkg()->getColumnType(column);								}
 	std::string				getColumnName(size_t col)				const				{ return DataSetPackage::pkg()->getColumnName(col);									}
@@ -55,6 +56,7 @@ public:
 	size_t					getMaximumColumnWidthInCharacters(int index) const			{ return DataSetPackage::pkg()->getMaximumColumnWidthInCharacters(index);			}
 	QModelIndex				parentModelForType(parIdxType type, int column = 0)	const	{ return DataSetPackage::pkg()->parentModelForType(type, column);					}
 	bool					synchingData()							const				{ return DataSetPackage::pkg()->synchingData();										}
+	void					pasteSpreadsheet(size_t row, size_t col, const std::vector<std::vector<QString>> & cells);
 
 				bool		showInactive()							const				{ return _showInactive;	}
 

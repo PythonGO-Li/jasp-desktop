@@ -51,6 +51,12 @@ bool DataSetTableModel::filterAcceptsRow(int source_row, const QModelIndex &)	co
 	return _showInactive || DataSetPackage::pkg()->getRowFilter(source_row);
 }
 
+void DataSetTableModel::pasteSpreadsheet(size_t row, size_t col, const std::vector<std::vector<QString> > & cells)
+{
+	QModelIndex idx = mapToSource(index(row, col));
+	DataSetPackage::pkg()->pasteSpreadsheet(idx.row(), idx.column(), cells);
+}
+
 QVariant DataSetTableModel::data(const QModelIndex &index, int role)	const
 {
 	DataSetPackage * package = DataSetPackage::pkg();

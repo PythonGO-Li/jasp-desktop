@@ -167,8 +167,8 @@ Item
 			text:			 model.moduleTitle
 			listIndex:       index
 			moduleName:		 model.moduleName
-			source:			!model.ribbonButton || model.ribbonButton.iconSource === "" ? ""		: (!model.ribbonButton.special ? "file:" : "qrc:/icons/") + model.ribbonButton.iconSource
-			menu:			!model.ribbonButton ? undefined : model.ribbonButton.analysisMenu
+			source:			!model.ribbonButton || model.ribbonButton.iconSource === "" ? ""		: (!model.ribbonButton.special ? "file:" :  jaspTheme.iconPath ) + model.ribbonButton.iconSource
+			menu:			!model.ribbonButton ? undefined : model.ribbonButton.menu
 			toolTip:		!model.ribbonButton ? undefined : model.ribbonButton.toolTip
 			enabled:		 model.ribbonButton && model.active
 			visible:		 model.ribbonButton

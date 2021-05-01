@@ -63,9 +63,15 @@ void Columns::setRowCount(size_t rowCount)
 
 void Columns::setColumnCount(size_t columnCount)
 {
-	_columnStore.reserve(columnCount);
-	for (size_t i = _columnStore.size(); i < columnCount; i++)
-		_columnStore.push_back(Column(_mem));
+	if(columnCount > _columnStore.size())
+	{
+		_columnStore.reserve(columnCount);
+		for (size_t i = _columnStore.size(); i < columnCount; i++)
+			_columnStore.push_back(Column(_mem));
+	}
+	else
+		while(_columnStore.size() > columnCount)
+			_columnStore.erase(--_columnStore.end());
 }
 
 

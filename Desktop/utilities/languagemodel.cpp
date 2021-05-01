@@ -168,7 +168,7 @@ void LanguageModel::changeLanguage(int index)
 	Settings::setValue(Settings::PREFERRED_LANGUAGE, cl);
 	setCurrentIndex(index);
 	_shouldEmitLanguageChanged = true;
-	
+		
 	//resumeEngines() will be emitted in resultsPageLoaded
 }
 

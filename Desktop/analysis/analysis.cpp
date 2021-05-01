@@ -172,6 +172,9 @@ void Analysis::run()
 
 void Analysis::refresh()
 {
+	if(_refreshBlocked)
+		return;
+
 	clearRSources();
 	TempFiles::deleteAll(_id);
 	run();

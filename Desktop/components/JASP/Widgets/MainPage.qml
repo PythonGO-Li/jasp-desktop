@@ -123,7 +123,7 @@ Item
 			implicitWidth:			jaspTheme.resultWidth + panelSplit.hackySplitHandlerHideWidth
 			Layout.fillWidth:		true
 			z:						3
-			visible:				mainWindow.analysesAvailable
+			visible:				mainWindow.analysesAvailable && !ribbonModel.dataMode
 			onVisibleChanged:		if(visible) width = jaspTheme.resultWidth; else data.maximizeData()
 			color:					analysesModel.currentAnalysisIndex !== -1 ? jaspTheme.uiBackground : jaspTheme.white
 

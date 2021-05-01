@@ -53,9 +53,10 @@ public:
 
 	QHash<int, QByteArray>	roleNames() const override;
 
-	int		currentIndex()			const { return _currentIndex; }
-	QString currentLanguageCode()	const;
-	QLocale::Language currentLanguage()	const {return currentLanguageInfo().language; };
+	int					currentIndex()			const { return _currentIndex; }
+	QString				currentLanguageCode()	const;
+	QLocale::Language	currentLanguage()		const { return currentLanguageInfo().language; };
+	QLocale				currentLocale()			const { return QLocale(currentLanguage()); }
 
 	//This function (currentTranslationSuffix) should be made obsolete through the abolishment of all the _nl etc files:
 	static	QString	currentTranslationSuffix()	{ return currentLanguageInfo().language  == QLocale::English ? "" : (suffixChar() + currentLanguageInfo().localName); }

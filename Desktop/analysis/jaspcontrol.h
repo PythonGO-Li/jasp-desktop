@@ -101,48 +101,49 @@ public:
 
 	JASPControl(QQuickItem *parent = nullptr);
 
-	ControlType		controlType()			const	{ return _controlType;			}
-	const QString&	name()					const	{ return _name;					}
-	QString			title()					const	{ return _title;				}
-	QString			info()					const	{ return _info;					}
-	QString			toolTip()				const	{ return _toolTip;				}
-	QString			helpMD(int howDeep = 2)	const;
-	bool			isBound()				const	{ return _isBound;				}
-	bool			nameMustBeUnique()		const	{ return _nameMustBeUnique;		}
-	bool			indent()				const	{ return _indent;				}
-	bool			isDependency()			const	{ return _isDependency;			}
-	bool			initialized()			const	{ return _initialized;			}
-	bool			shouldShowFocus()		const	{ return _shouldShowFocus;		}
-	bool			shouldStealHover()		const	{ return _shouldStealHover;		}
-	bool			debug()					const	{ return _debug;				}
-	bool			parentDebug()			const	{ return _parentDebug;			}
-	bool			hasError()				const;
-	bool			hasWarning()			const;
-	bool			childHasError()			const;
-	bool			childHasWarning()		const;
-	bool			focusOnTab()			const	{ return activeFocusOnTab();	}
-	bool			hasUserInteractiveValue() const	{ return _hasUserInteractiveValue; }
+	ControlType			controlType()			const	{ return _controlType;			}
+	const QString&		name()					const	{ return _name;					}
+	QString				title()					const	{ return _title;				}
+	QString				info()					const	{ return _info;					}
+	QString				toolTip()				const	{ return _toolTip;				}
+	QString				helpMD(int howDeep = 2)	const;
+	bool				isBound()				const	{ return _isBound;				}
+	bool				nameMustBeUnique()		const	{ return _nameMustBeUnique;		}
+	bool				indent()				const	{ return _indent;				}
+	bool				isDependency()			const	{ return _isDependency;			}
+	bool				initialized()			const	{ return _initialized;			}
+	bool				shouldShowFocus()		const	{ return _shouldShowFocus;		}
+	bool				shouldStealHover()		const	{ return _shouldStealHover;		}
+	bool				debug()					const	{ return _debug;				}
+	bool				parentDebug()			const	{ return _parentDebug;			}
+	bool				hasError()				const;
+	bool				hasWarning()			const;
+	bool				childHasError()			const;
+	bool				childHasWarning()		const;
+	bool				focusOnTab()			const	{ return activeFocusOnTab();	}
+	bool				hasUserInteractiveValue() const	{ return _hasUserInteractiveValue; }
 
-	AnalysisForm*	form()					const	{ return _form;					}
-	QQuickItem*		childControlsArea()		const	{ return _childControlsArea;	}
-	JASPListControl* parentListView()		const	{ return _parentListView;		}
-	JASPControl*	parentListViewEx()		const;
-	QString			parentListViewKey()		const	{ return _parentListViewKey;	}
-	QQuickItem*		innerControl()			const	{ return _innerControl;			}
-	QQuickItem*		background()			const	{ return _background;			}
-	QQuickItem*		focusIndicator()		const	{ return _focusIndicator;		}
-	QStringList		dependencyMustContain()	const	{ return _dependencyMustContain; }
-	int				preferredHeight()		const	{ return _preferredHeight;		}
-	int				preferredWidth()		const	{ return _preferredWidth;		}
-	int				cursorShape()			const	{ return _cursorShape;			}
-	bool			hovered()				const;
-	int				alignment()				const	{ return _alignment;			}
+	AnalysisForm	*	form()					const	{ return _form;					}
+	QQuickItem		*	childControlsArea()		const	{ return _childControlsArea;	}
+	JASPListControl	*	parentListView()		const	{ return _parentListView;		}
+	JASPControl		*	parentListViewEx()		const;
+	QString				parentListViewKey()		const	{ return _parentListViewKey;	}
+	QQuickItem		*	innerControl()			const	{ return _innerControl;			}
+	QQuickItem		*	background()			const	{ return _background;			}
+	QQuickItem		*	focusIndicator()		const	{ return _focusIndicator;		}
+	QStringList			dependencyMustContain()	const	{ return _dependencyMustContain; }
+	int					preferredHeight()		const	{ return _preferredHeight;		}
+	int					preferredWidth()		const	{ return _preferredWidth;		}
+	int					cursorShape()			const	{ return _cursorShape;			}
+	bool				hovered()				const;
+	int					alignment()				const	{ return _alignment;			}
 
-	QString			humanFriendlyLabel()	const;
-	void			setInitialized()	{ if (!_initialized) { _initialized = true; emit initializedChanged();} }
+	QString				humanFriendlyLabel()	const;
+	void				setInitialized()	{ if (!_initialized) { _initialized = true; emit initializedChanged();} }
+
 	QVector<JASPControl::ParentKey>	getParentKeys();
 
-	QQmlComponent					*	rowComponent()				const { return _rowComponent;	}
+	QQmlComponent				*	rowComponent()				const { return _rowComponent;	}
 
 	static QString					ControlTypeToFriendlyString(ControlType controlType);
 	static QList<JASPControl*>		getChildJASPControls(const QQuickItem* item);

@@ -226,7 +226,7 @@ private slots:
 	void saveJaspFileHandler();
 	void logToFileChanged(bool logToFile);
 	void logRemoveSuperfluousFiles(int maxFilesToKeep);
-
+	void onDataModeChanged(bool dataMode) { if(analysesAvailable()) setDataPanelVisible(dataMode); }
 	void jaspThemeChanged(JaspTheme * newTheme);
 
 	void printQmlWarnings(const QList<QQmlError> &warnings);

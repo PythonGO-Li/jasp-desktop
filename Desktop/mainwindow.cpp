@@ -67,7 +67,7 @@
 #include "gui/messageforwarder.h"
 
 #include "modules/dynamicmodules.h"
-#include "modules/analysismenumodel.h"
+#include "modules/menumodel.h"
 #include "modules/description/entrybase.h"
 
 #include "qquick/datasetview.h"
@@ -264,6 +264,7 @@ void MainWindow::makeConnections()
 	connect(this,					&MainWindow::screenPPIChanged,						_preferences,			&PreferencesModel::setDefaultPPI							);
 	connect(this,					&MainWindow::editImageCancelled,					_resultsJsInterface,	&ResultsJsInterface::cancelImageEdit						);
 	connect(this,					&MainWindow::dataAvailableChanged,					_dynamicModules,		&DynamicModules::setDataLoaded								);
+	connect(this,					&MainWindow::dataAvailableChanged,					_ribbonModel,			&RibbonModel::dataLoadedChanged								);
 
 	connect(_package,				&DataSetPackage::datasetChanged,					_filterModel,			&FilterModel::datasetChanged,								Qt::QueuedConnection);
 	connect(_package,				&DataSetPackage::datasetChanged,					_computedColumnsModel,	&ComputedColumnsModel::datasetChanged,						Qt::QueuedConnection);
@@ -273,7 +274,11 @@ void MainWindow::makeConnections()
 	connect(_package,				&DataSetPackage::columnDataTypeChanged,				_computedColumnsModel,	&ComputedColumnsModel::recomputeColumn						);
 	connect(_package,				&DataSetPackage::freeDatasetSignal,					_loader,				&AsyncLoader::free											);
 	connect(_package,				&DataSetPackage::checkDoSync,						_loader,				&AsyncLoader::checkDoSync,									Qt::DirectConnection); //Force DirectConnection because the signal is called from Importer which means it is running in AsyncLoaderThread...
-
+	connect(_package,				&DataSetPackage::newDataLoaded,						this,					&MainWindow::populateUIfromDataSet							);
+	connect(_package,				&DataSetPackage::dataModeChanged,					_analyses,				&Analyses::dataModeChanged									);
+	connect(_package,				&DataSetPackage::dataModeChanged,					_engineSync,			&EngineSync::dataModeChanged								);
+	connect(_package,				&DataSetPackage::dataModeChanged,					this,					&MainWindow::onDataModeChanged								);
+	
 	connect(_engineSync,			&EngineSync::computeColumnSucceeded,				_computedColumnsModel,	&ComputedColumnsModel::computeColumnSucceeded				);
 	connect(_engineSync,			&EngineSync::computeColumnFailed,					_computedColumnsModel,	&ComputedColumnsModel::computeColumnFailed					);
 	connect(_engineSync,			&EngineSync::engineTerminated,						this,					&MainWindow::fatalError,									Qt::QueuedConnection); //To give the process some time to realize it has crashed or something
@@ -365,6 +370,16 @@ void MainWindow::makeConnections()
 
 	connect(_ribbonModel,			&RibbonModel::analysisClickedSignal,				_analyses,				&Analyses::analysisClickedHandler							);
 	connect(_ribbonModel,			&RibbonModel::showRCommander,						this,					&MainWindow::showRCommander									);
+	connect(_ribbonModel,			&RibbonModel::generateEmptyData,					_package,				&DataSetPackage::generateEmptyData							);
+	connect(_ribbonModel,			&RibbonModel::dataModeChanged,						_package,				&DataSetPackage::dataModeChanged							);
+	connect(_ribbonModel,			&RibbonModel::rowInsert,							_package,				&DataSetPackage::rowInsert									);
+	connect(_ribbonModel,			&RibbonModel::rowAppend,							_package,				&DataSetPackage::rowAppend									);
+	connect(_ribbonModel,			&RibbonModel::rowPrepend,							_package,				&DataSetPackage::rowPrepend									);
+	connect(_ribbonModel,			&RibbonModel::rowEraseCur,							_package,				&DataSetPackage::rowEraseCur								);
+	connect(_ribbonModel,			&RibbonModel::colEraseCur,							_package,				&DataSetPackage::colEraseCur								);
+	connect(_ribbonModel,			&RibbonModel::colPrepend,							_package,				&DataSetPackage::colPrepend									);
+	connect(_ribbonModel,			&RibbonModel::colInsert,							_package,				&DataSetPackage::colInsert									);
+	connect(_ribbonModel,			&RibbonModel::colAppend,							_package,				&DataSetPackage::colAppend									);
 
 	connect(_dynamicModules,		&DynamicModules::dynamicModuleUnloadBegin,			_analyses,				&Analyses::removeAnalysesOfDynamicModule					);
 	connect(_dynamicModules,		&DynamicModules::dynamicModuleChanged,				_analyses,				&Analyses::refreshAnalysesOfDynamicModule					);
@@ -1117,6 +1132,9 @@ void MainWindow::populateUIfromDataSet()
 	if(!_dataAvailable)	setDataPanelVisible(false);
 	else				setDataPanelVisible(!hasAnalyses);
 
+	if(_dataAvailable)
+		setWelcomePageVisible(false);
+
 	_analyses->setVisible(hasAnalyses && !resultXmlCompare::compareResults::theOne()->testMode());
 
 	if (_package->warningMessage() != "")	MessageForwarder::showWarning(_package->warningMessage());
@@ -1124,7 +1142,7 @@ void MainWindow::populateUIfromDataSet()
 
 	matchComputedColumnsToAnalyses();
 
-	_package->setLoaded();
+	_package->setLoaded(true);
 	checkUsedModules();
 
 	_resultsJsInterface->setScrollAtAll(true);

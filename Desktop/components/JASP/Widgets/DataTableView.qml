@@ -1,6 +1,7 @@
-import QtQuick				2.9
+import QtQuick				2.15
 import QtQuick.Controls		1.4 as Old
-import QtQuick.Controls		2.2
+import QtQuick.Controls		2.15
+import QtQml.Models			2.15
 import QtGraphicalEffects	1.0
 
 
@@ -20,19 +21,93 @@ FocusScope
 
 		JASPDataView
 		{
-			focus:				__myRoot.focus
+			focus:					__myRoot.focus
 
-			id:					dataTableView
-			anchors.top:		parent.top
-			anchors.left:		parent.left
-			anchors.right:		parent.right
-			anchors.bottom:		dataStatusBar.top
+			id:						dataTableView
+			anchors.top:			parent.top
+			anchors.left:			parent.left
+			anchors.right:			parent.right
+			anchors.bottom:			dataStatusBar.top
 
 			itemHorizontalPadding:	8 * jaspTheme.uiScale
 			itemVerticalPadding:	8 * jaspTheme.uiScale
 
-			model:				dataSetModel
-			onDoubleClicked:	__myRoot.doubleClicked()
+			model:					dataSetModel
+			onDoubleClicked:		__myRoot.doubleClicked()
+			cacheItems:				!ribbonModel.dataMode
+
+			//doubleClickWorkaround:	!ribbonModel.dataMode
+			//flickableInteractive:	!ribbonModel.dataMode
+			
+			editDelegate:
+				TextInput
+				{
+					id:						editItem
+					text:					itemText
+					color:					itemActive ? jaspTheme.textEnabled : jaspTheme.textDisabled
+					font:					jaspTheme.font
+					verticalAlignment:		Text.AlignVCenter
+					onEditingFinished:		finishEdit();
+					z:						10
+
+
+					Component.onCompleted:	focusTimer.start();
+					Timer
+					{
+						id:					focusTimer
+						interval:			10
+						repeat:				false
+						onTriggered:
+						{
+							editItem.forceActiveFocus()
+							dataTableView.moveItemIntoView(editItem);
+						}
+					}
+
+					property bool alreadyFinished:	false
+
+					function finishEdit()
+					{
+						if(!alreadyFinished)
+							dataTableView.view.editFinished(index, text);
+						alreadyFinished = true;
+					}
+
+					Keys.onUpPressed:		if(rowIndex		> 0)								{ finishEdit(); dataTableView.view.selectionStart = dataSetModel.index(rowIndex - 1,	columnIndex);			event.accepted = true; }
+					Keys.onDownPressed:		if(rowIndex		< dataSetModel.rowCount()    - 1)	{ finishEdit(); dataTableView.view.selectionStart = dataSetModel.index(rowIndex + 1,	columnIndex);			event.accepted = true; }
+					Keys.onLeftPressed:		if(columnIndex	> 0)								{ finishEdit(); dataTableView.view.selectionStart = dataSetModel.index(rowIndex,		columnIndex - 1);		event.accepted = true; }
+					Keys.onRightPressed:	if(columnIndex	< dataSetModel.columnCount() - 1)	{ finishEdit(); dataTableView.view.selectionStart = dataSetModel.index(rowIndex,		columnIndex + 1);		event.accepted = true; }
+					Keys.onPressed:
+						if(event.modifiers & Qt.ControlModifier)
+							switch(event.key)
+							{
+							case Qt.Key_C:
+								theView.copy();
+								event.accepted = true;
+								break;
+
+							case Qt.Key_V:
+								theView.paste();
+								event.accepted = true;
+								break;
+							}
+
+					Rectangle
+					{
+						id:					highlighter
+						color:				jaspTheme.itemHighlight
+						z:					-1
+						visible:			ribbonModel.dataMode
+						anchors
+						{
+							fill:			 parent
+							topMargin:		-dataTableView.itemVerticalPadding
+							leftMargin:		-dataTableView.itemHorizontalPadding
+							rightMargin:	-dataTableView.itemHorizontalPadding
+							bottomMargin:	-dataTableView.itemVerticalPadding
+						}
+					}
+				}
 
 			itemDelegate:
 				Text
@@ -41,6 +116,66 @@ FocusScope
 					color:				itemActive ? jaspTheme.textEnabled : jaspTheme.textDisabled
 					font:				jaspTheme.font
 					verticalAlignment:	Text.AlignVCenter
+					
+					MouseArea
+					{
+						z:					1234
+						hoverEnabled:		true
+						anchors.fill:		itemHighlight
+						acceptedButtons:	Qt.LeftButton
+						
+						onPressed:			
+							if(ribbonModel.dataMode)
+							{
+								var shiftPressed = Boolean(mouse.modifiers & Qt.ShiftModifier);
+								
+								if(!shiftPressed)	dataTableView.view.selectionStart    = index;
+								else				dataTableView.view.selectionEnd = index
+
+								
+								forceActiveFocus();
+							}
+											
+						onPositionChanged:	if(ribbonModel.dataMode && Boolean(mouse.modifiers & Qt.ShiftModifier))
+											{
+												dataTableView.view.pollSelectScroll(index)
+												dataTableView.view.selectionEnd = index
+											}
+						
+						Keys.onPressed:	
+							if(event.modifiers & Qt.ControlModifier)
+								switch(event.key)
+								{
+								case Qt.Key_C:
+									theView.copy();
+									event.accepted = true;
+									break;
+									
+								case Qt.Key_V:
+									theView.paste();
+									event.accepted = true;
+									break;
+								}
+					}
+					
+					Rectangle
+					{
+						id:				itemHighlight
+						visible:		ribbonModel.dataMode && (dataTableView.selection.hasSelection, dataTableView.selection.isSelected(index))
+						
+						color:			jaspTheme.itemHighlight
+						opacity:		1.0
+						z:				-1
+
+						anchors
+						{
+							fill:			 parent
+							topMargin:		-dataTableView.itemVerticalPadding
+							leftMargin:		-dataTableView.itemHorizontalPadding
+							rightMargin:	-dataTableView.itemHorizontalPadding
+							bottomMargin:	-dataTableView.itemVerticalPadding
+						}
+					}
 				}
 
 			leftTopCornerItem:
