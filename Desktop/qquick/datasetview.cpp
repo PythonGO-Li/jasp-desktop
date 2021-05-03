@@ -1170,6 +1170,9 @@ void DataSetView::edit(QModelIndex here)
 		return;
 
 	Log::log() << "DataSetView::edit(row=" << here.row() << ", col=" << here.column() << ")" << std::endl;
+
+	if(editing())
+		destroyEditItem();
 	
 	//Turn editing on
 	setEditing(true);

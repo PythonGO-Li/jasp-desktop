@@ -150,6 +150,8 @@ void DataSetPackage::generateEmptyData()
 void DataSetPackage::logDataModeChanged(bool dataMode)
 {
 	Log::log() << "Data Mode " << (dataMode ? "on" : "off") << "!" << std::endl;
+	beginResetModel();
+	endResetModel();
 }
 
 QModelIndex DataSetPackage::index(int row, int column, const QModelIndex &parent) const
@@ -163,21 +165,27 @@ QModelIndex DataSetPackage::index(int row, int column, const QModelIndex &parent
 		if(parIdxType(row) == parIdxType::label)
 			pointer += column;
 	}
-	else					pointer = static_cast<parIdxType*>(parent.internalPointer());
+	else
+		pointer = static_cast<parIdxType*>(parent.internalPointer());
 
 	return createIndex(row, column, static_cast<void*>(pointer));
 }
 
 parIdxType DataSetPackage::parentIndexTypeIs(const QModelIndex &index) const
 {
-	if(!index.isValid()) return parIdxType::root;
-
-	//parIdxType	* pointer = static_cast<parIdxType*>(index.internalPointer());
-	//return		* pointer; //Is defined in static array _nodeCategory!
+	if(!index.isValid())
+		return parIdxType::root;
 
 	uint64_t notPointer = reinterpret_cast<uint64_t>(index.internalPointer());
 	if(notPointer < uint64_t(parIdxType::label))
-			return parIdxType(notPointer);
+	{
+		parIdxType returnThis = parIdxType(notPointer);
+
+		/*if(notPointer > uint64_t(parIdxType::label))
+			Log::log() << "???" << std::endl;*/
+
+		return returnThis;
+	}
 
 	return parIdxType::label; //The label also encodes which column it is.
 }
@@ -224,6 +232,7 @@ int DataSetPackage::rowCount(const QModelIndex & parent) const
 		return labelSize;
 	}
 	case parIdxType::filter:
+	default:
 	case parIdxType::root:		//return int(parIdxType::leaf); Its more logical to get the actual datasize
 	case parIdxType::data:		return !_dataSet ? 0 : _dataSet->rowCount();
 	}
@@ -237,6 +246,7 @@ int DataSetPackage::columnCount(const QModelIndex &parent) const
 	{
 	case parIdxType::filter:	return 1;
 	case parIdxType::label:		return 1; //The parent index has a column index in it that tells you which actual column was selected!
+	default:
 	case parIdxType::root:		//Default is columnCount of data because it makes programming easier. I do hope it doesn't mess up the use of the tree-like-structure of the data though
 	case parIdxType::data:		return _dataSet == nullptr ? 0 : _dataSet->columnCount();
 	}
