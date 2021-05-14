@@ -224,12 +224,8 @@ Window
 		CreateComputeColumnDialog	{ id: createComputeDialog	}
 		ModuleInstaller				{ id: moduleInstallerDialog	}
 		ResizeDataDialog			{ id: resizeDataDialog		}
-		
-		PlotEditor
-		{
-			id:					plotEditingDialog
-			visible:			plotEditorModel.visible
-		}
+		RenameColumnDialog			{ id: renameColumnDialog	}
+		PlotEditor					{ id: plotEditingDialog		}
 
 		/*MessageBox
 		{

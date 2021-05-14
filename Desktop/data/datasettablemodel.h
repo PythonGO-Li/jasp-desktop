@@ -42,12 +42,14 @@ public:
 	Q_INVOKABLE bool		isColumnNameFree(QString name)								{ return DataSetPackage::pkg()->isColumnNameFree(name);								}
 	Q_INVOKABLE	QVariant	columnTitle(int column)					const				{ return DataSetPackage::pkg()->getColumnTitle(column);								}
 	Q_INVOKABLE QVariant	columnIcon(int column)					const				{ return DataSetPackage::pkg()->getColumnIcon(column);								}
+	Q_INVOKABLE QString		columnName(int column)					const;
+	Q_INVOKABLE void		setColumnName(int col, QString name)	const;
 	Q_INVOKABLE QVariant	getColumnTypesWithCorrespondingIcon()	const				{ return DataSetPackage::pkg()->getColumnTypesWithCorrespondingIcon();				}
 	Q_INVOKABLE bool		columnHasFilter(int column)				const				{ return DataSetPackage::pkg()->getColumnHasFilter(column);							}
 	Q_INVOKABLE bool		columnUsedInEasyFilter(int column)		const				{ return DataSetPackage::pkg()->isColumnUsedInEasyFilter(column);					}
 	Q_INVOKABLE void		resetAllFilters()											{		 DataSetPackage::pkg()->resetAllFilters();									}
 	Q_INVOKABLE int			setColumnTypeFromQML(int columnIndex, int newColumnType)	{ return DataSetPackage::pkg()->setColumnTypeFromQML(columnIndex, newColumnType);	}
-	Q_INVOKABLE void		resizeData(int row, int col)								{		 DataSetPackage::pkg()->resizeData(row, col);							}
+	Q_INVOKABLE void		resizeData(int row, int col)								{		 DataSetPackage::pkg()->resizeData(row, col);								}
 
 	columnType				getColumnType(size_t column)			const				{ return DataSetPackage::pkg()->getColumnType(column);								}
 	std::string				getColumnName(size_t col)				const				{ return DataSetPackage::pkg()->getColumnName(col);									}
@@ -66,6 +68,8 @@ signals:
 				void		columnTypeChanged(QString colName);
 				void		labelChanged(QString columnName, QString originalLabel, QString newLabel);
 				void		labelsReordered(QString columnName);
+
+				void		renameColumnDialog(int columnIndex);
 
 public slots:
 				void		setShowInactive(bool showInactive);

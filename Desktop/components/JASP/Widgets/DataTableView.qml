@@ -442,6 +442,8 @@ FocusScope
 								labelModel.chosenColumn	= columnIndex;
 								labelModel.visible		= changedIndex ? true : !labelModel.visible;
 							}
+							else
+								dataSetModel.renameColumnDialog(columnIndex);
 
 							if(dataSetModel.columnUsedInEasyFilter(columnIndex))
 							{

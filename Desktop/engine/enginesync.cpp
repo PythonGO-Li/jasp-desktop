@@ -683,9 +683,13 @@ bool EngineSync::allEnginesInitializing()
 
 void EngineSync::dataModeChanged(bool dataMode)
 {
-	/*Log::log() << "Data mode turned " << (dataMode ? "on so stopping" : "off so restarting") << " engines." << std::endl;
-	if(dataMode)	pauseEngines();
-	else			resumeEngines();*/
+	if(!dataMode)
+	{
+		Log::log() << "Data mode turned off, so restarting engines." << std::endl;
+
+		pauseEngines();
+		resumeEngines();
+	}
 }
 
 void EngineSync::moduleLoadingFailedHandler(const QString & moduleName, const QString & errorMessage, int channelID)

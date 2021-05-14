@@ -213,16 +213,17 @@ public:
 				Json::Value					columnToJsonForJASPFile(size_t columnIndex, Json::Value & labelsData, size_t & dataSize);
 				void						columnLabelsFromJsonForJASPFile(Json::Value xData, Json::Value columnDesc, size_t columnIndex, std::map<std::string, std::map<int, int> > & mapNominalTextValues);
 
-				enum columnType				getColumnType(std::string columnName)	const;
-				enum columnType				getColumnType(size_t columnIndex)		const	{ return _dataSet ? _dataSet->column(columnIndex).getColumnType() : columnType::unknown; }
-				std::string					getColumnName(size_t columnIndex)		const	{ return _dataSet ? _dataSet->column(columnIndex).name() : ""; }
-				int							getColumnIndex(std::string name)		const	{ return !_dataSet ? -1 : _dataSet->getColumnIndex(name); }
-				int							getColumnIndex(QString name)			const	{ return getColumnIndex(name.toStdString()); }
-				std::vector<int>			getColumnDataInts(size_t columnIndex);
-				std::vector<double>			getColumnDataDbls(size_t columnIndex);
-				std::vector<std::string>	getColumnDataStrings(size_t columnIndex);
-				void						setColumnDataInts(size_t columnIndex, std::vector<int> ints);
-				void						setColumnDataDbls(size_t columnIndex, std::vector<double> dbls);
+				int							getColumnIndex(		std::string name)		const	{ return !_dataSet ? -1 : _dataSet->getColumnIndex(name); }
+				int							getColumnIndex(		QString name)			const	{ return getColumnIndex(name.toStdString()); }
+				enum columnType				getColumnType(		std::string columnName)	const;
+				enum columnType				getColumnType(		size_t columnIndex)		const	{ return _dataSet ? _dataSet->column(columnIndex).getColumnType() : columnType::unknown; }
+				std::string					getColumnName(		size_t columnIndex)		const	{ return _dataSet ? _dataSet->column(columnIndex).name() : ""; }
+				std::vector<int>			getColumnDataInts(	size_t columnIndex);
+				std::vector<double>			getColumnDataDbls(	size_t columnIndex);
+				std::vector<std::string>	getColumnDataStrs(	size_t columnIndex);
+				void						setColumnName(		size_t columnIndex, const std::string & newName);
+				void						setColumnDataInts(	size_t columnIndex, std::vector<int> ints);
+				void						setColumnDataDbls(	size_t columnIndex, std::vector<double> dbls);
 				size_t						getMaximumColumnWidthInCharacters(int columnIndex) const;
 				QStringList					getColumnLabelsAsStringList(std::string columnName)		const;
 				QStringList					getColumnLabelsAsStringList(size_t columnIndex)			const;

@@ -1299,7 +1299,7 @@ std::vector<double> DataSetPackage::getColumnDataDbls(size_t columnIndex)
 	return std::vector<double>(col.AsDoubles.begin(), col.AsDoubles.end());
 }
 
-std::vector<std::string> DataSetPackage::getColumnDataStrings(size_t columnIndex)
+std::vector<std::string> DataSetPackage::getColumnDataStrs(size_t columnIndex)
 {
 	if(_dataSet == nullptr) return {};
 
@@ -1321,6 +1321,20 @@ std::vector<std::string> DataSetPackage::getColumnDataStrings(size_t columnIndex
 	}
 	
 	return out;
+}
+
+void DataSetPackage::setColumnName(size_t columnIndex, const std::string & newName)
+{
+	if(!_dataSet)
+		return;
+
+	std::string oldName = getColumnName(columnIndex);
+
+	beginResetModel();
+	_dataSet->column(columnIndex).setName(newName);
+	endResetModel();
+
+	emit datasetChanged({}, {}, QMap<QString, QString>({{tq(oldName), tq(newName)}}), false, false);
 }
 
 
@@ -1513,7 +1527,7 @@ void DataSetPackage::resizeData(size_t rows, size_t cols)
 
 	for(size_t c=newRows ? 0 : oriCols; c<cols; c++)
 	{
-		std::vector<std::string>	colVals = getColumnDataStrings(c);
+		std::vector<std::string>	colVals = getColumnDataStrs(c);
 		std::string					colName = getColumnName(c);
 
 		for(size_t r=oriRows; r<rows; r++)
@@ -1554,7 +1568,7 @@ void DataSetPackage::pasteSpreadsheet(size_t row, size_t col, const std::vector<
 	for(int c=0; c<colMax; c++)
 	{
 		int							dataCol = c +  col;
-		std::vector<std::string>	colVals = getColumnDataStrings(dataCol);	
+		std::vector<std::string>	colVals = getColumnDataStrs(dataCol);
 		
 		for(int r=0; r<rowMax; r++)
 		{
