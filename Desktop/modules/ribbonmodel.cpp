@@ -104,8 +104,8 @@ void RibbonModel::addRibbonButtonModelFromDynamicModule(Modules::DynamicModule *
 
 void RibbonModel::addSpecialRibbonButtonsEarly()
 {
-	auto * switchData	=	new RibbonButton(this, "Data",			fq(tr("Edit Data")),		"data-button.svg",			false, [&](){ emit showData(); },			false);
-	addRibbonButtonModel(	new RibbonButton(this, "Statistics",	fq(tr("Statistics")),		"JASP_logo_green.svg",		false, [&](){ emit showStatistics(); },		true),			size_t(RowType::Data)		);
+	auto * switchData	=	new RibbonButton(this, "Data",			fq(tr("Edit Data")),		"data-button.svg",			false, [&](){ emit showData(); },		fq(tr("Switch JASP to data editing mode")),		false);
+	addRibbonButtonModel(	new RibbonButton(this, "Analyses",		fq(tr("Analyses")),			"JASP_logo_green.svg",		false, [&](){ emit showStatistics(); }, fq(tr("Switch JASP to analyses mode")),			true),			size_t(RowType::Data)		);
 
 
 	/*Modules::AnalysisEntries	* insertDataEntries = new Modules::AnalysisEntries(),
@@ -125,17 +125,17 @@ void RibbonModel::addSpecialRibbonButtonsEarly()
 	eraseDataEntries->push_back(new Modules::AnalysisEntry([&](){ emit colEraseCur();  }, fq(tr("Erase column"))));
 	eraseDataEntries->push_back(new Modules::AnalysisEntry([&](){ emit rowEraseCur();  }, fq(tr("Erase row"))));
 	*/
-	auto * newData		=	new RibbonButton(this, "Data-New",		fq(tr("New Data")),			"data-button-new.svg",		false, [&](){ emit genShowEmptyData();  emit resizeData(); },	true);
-	//auto * insertData	=	new RibbonButton(this, "Data-Insert",	fq(tr("Insert")),			"data-button-insert.svg",	insertDataEntries,							false);
-	//auto * eraseData	=	new RibbonButton(this, "Data-Erase",	fq(tr("Erase")),			"data-button-erase.svg",	eraseDataEntries,							false);
-	auto * resizeDataB	=	new RibbonButton(this, "Data-Resize",	fq(tr("Resize Data")),		"data-button-resize.svg",	false, [&](){ emit resizeData(); },			false);
-	auto * externalEdit	=	new RibbonButton(this, "Data-External",	fq(tr("External Edit")),	"data-button-external.svg",	false, [&](){   },							false);
+	auto * newData		=	new RibbonButton(this, "Data-New",		fq(tr("New Data")),			"data-button-new.svg",		false, [&](){ emit genShowEmptyData();  emit resizeData(); },	fq(tr("Open a workspace without data")),	true);
+	//auto * insertData	=	new RibbonButton(this, "Data-Insert",	fq(tr("Insert")),			"data-button-insert.svg",	insertDataEntries,												fq(tr("")),	false);
+	//auto * eraseData	=	new RibbonButton(this, "Data-Erase",	fq(tr("Erase")),			"data-button-erase.svg",	eraseDataEntries,												fq(tr("")),	false);
+	auto * resizeDataB	=	new RibbonButton(this, "Data-Resize",	fq(tr("Resize Data")),		"data-button-resize.svg",	false, [&](){ emit resizeData(); },								fq(tr("Resize your dataset")),	false);
+	//auto * externalEdit	=	new RibbonButton(this, "Data-External",	fq(tr("External Edit")),	"data-button-external.svg",	false, [&](){   },												fq(tr("")),	false);
 
 	connect(this, &RibbonModel::dataLoadedChanged, switchData,		&RibbonButton::setEnabled);
 	connect(this, &RibbonModel::dataLoadedChanged, newData,			[=](bool loaded){ newData->setEnabled(	 !loaded); });
 	//connect(this, &RibbonModel::dataLoadedChanged, insertData,		&RibbonButton::setEnabled);
 	//connect(this, &RibbonModel::dataLoadedChanged, eraseData,		&RibbonButton::setEnabled);
-	connect(this, &RibbonModel::dataLoadedChanged, externalEdit,	&RibbonButton::setEnabled);
+	//connect(this, &RibbonModel::dataLoadedChanged, externalEdit,	&RibbonButton::setEnabled);
 	connect(this, &RibbonModel::dataLoadedChanged, resizeDataB,		&RibbonButton::setEnabled);
 
 	addRibbonButtonModel(switchData,	size_t(RowType::Analyses));
@@ -143,7 +143,7 @@ void RibbonModel::addSpecialRibbonButtonsEarly()
 	//addRibbonButtonModel(insertData,	size_t(RowType::Data));
 	//addRibbonButtonModel(eraseData,		size_t(RowType::Data));
 	addRibbonButtonModel(resizeDataB,	size_t(RowType::Data));
-	addRibbonButtonModel(externalEdit,	size_t(RowType::Data));
+	//addRibbonButtonModel(externalEdit,	size_t(RowType::Data));
 }
 
 void RibbonModel::addSpecialRibbonButtonsLate()

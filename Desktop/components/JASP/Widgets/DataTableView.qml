@@ -73,24 +73,53 @@ FocusScope
 						alreadyFinished = true;
 					}
 
-					Keys.onUpPressed:		if(rowIndex		> 0)								{ finishEdit(); dataTableView.view.selectionStart = dataSetModel.index(rowIndex - 1,	columnIndex);			event.accepted = true; }
-					Keys.onDownPressed:		if(rowIndex		< dataSetModel.rowCount()    - 1)	{ finishEdit(); dataTableView.view.selectionStart = dataSetModel.index(rowIndex + 1,	columnIndex);			event.accepted = true; }
-					Keys.onLeftPressed:		if(columnIndex	> 0)								{ finishEdit(); dataTableView.view.selectionStart = dataSetModel.index(rowIndex,		columnIndex - 1);		event.accepted = true; }
-					Keys.onRightPressed:	if(columnIndex	< dataSetModel.columnCount() - 1)	{ finishEdit(); dataTableView.view.selectionStart = dataSetModel.index(rowIndex,		columnIndex + 1);		event.accepted = true; }
 					Keys.onPressed:
-						if(event.modifiers & Qt.ControlModifier)
-							switch(event.key)
+					{
+						var controlPressed	= Boolean(event.modifiers & Qt.ControlModifier);
+						var shiftPressed	= Boolean(event.modifiers & Qt.ShiftModifier  );
+						var arrowPressed	= false;
+						var arrowIndex;
+
+						switch(event.key)
+						{
+						case Qt.Key_C:
+							if(controlPressed)
 							{
-							case Qt.Key_C:
 								theView.copy();
 								event.accepted = true;
-								break;
+							}
+							break;
 
-							case Qt.Key_V:
+						case Qt.Key_V:
+							if(controlPressed)
+							{
 								theView.paste();
 								event.accepted = true;
-								break;
 							}
+							break;
+
+						case Qt.Key_Up:		if(rowIndex		> 0)								{ arrowPressed = true; arrowIndex   = dataSetModel.index(rowIndex - 1,	columnIndex);		} break;
+						case Qt.Key_Down:	if(rowIndex		< dataSetModel.rowCount()    - 1)	{ arrowPressed = true; arrowIndex   = dataSetModel.index(rowIndex + 1,	columnIndex);		} break;
+						case Qt.Key_Left:	if(columnIndex	> 0)								{ arrowPressed = true; arrowIndex   = dataSetModel.index(rowIndex,		columnIndex - 1);	} break;
+						case Qt.Key_Right:	if(columnIndex	< dataSetModel.columnCount() - 1)	{ arrowPressed = true; arrowIndex   = dataSetModel.index(rowIndex,		columnIndex + 1);	} break;
+						}
+
+						if(arrowPressed)
+						{
+							finishEdit();
+
+							if(!shiftPressed)
+								dataTableView.view.selectionStart	= arrowIndex;
+							else
+							{
+								dataTableView.view.selectionEnd  = arrowIndex;
+								dataTableView.view.edit(arrowIndex);
+							}
+
+							event.accepted = true;
+						}
+
+					}
 
 					Rectangle
 					{
@@ -129,8 +158,8 @@ FocusScope
 							{
 								var shiftPressed = Boolean(mouse.modifiers & Qt.ShiftModifier);
 								
-								if(!shiftPressed)	dataTableView.view.selectionStart    = index;
-								else				dataTableView.view.selectionEnd = index
+								if(!shiftPressed)	dataTableView.view.selectionStart   = index;
+								else				dataTableView.view.selectionEnd		= index
 
 								
 								forceActiveFocus();

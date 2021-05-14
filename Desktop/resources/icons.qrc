@@ -222,5 +222,6 @@
         <file>icons/lightTheme/data-button-new.svg</file>
         <file>icons/darkTheme/data-button-resize.svg</file>
         <file>icons/lightTheme/data-button-resize.svg</file>
+        <file>icons/lightTheme/data-button.svg</file>
     </qresource>
 </RCC>

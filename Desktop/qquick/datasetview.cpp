@@ -975,18 +975,18 @@ void DataSetView::setSelectionStart(QModelIndex selectionStart)
 	
 	Log::log() << "DataSetView::setSelectionStart( row=" << selectionStart.row() << ", col=" << selectionStart.column() << " )" << std::endl;
 		
-	_selectionStart = selectionStart;
+	_selectionStart = _model->index(selectionStart.row(), selectionStart.column());;
 	emit selectionStartChanged(_selectionStart);
 	
-	if(!selectionStart.isValid())
+	if(!_selectionStart.isValid())
 	{
 		//_selectionModel->clear();
 		return;
 	}
 
-	_selectionModel->select(selectionStart, QItemSelectionModel::SelectCurrent);
+	_selectionModel->select(_selectionStart, QItemSelectionModel::SelectCurrent);
 	
-	edit(selectionStart);
+	edit(_selectionStart);
 }
 
 void DataSetView::setSelectionEnd(QModelIndex selectionEnd) 
@@ -999,7 +999,7 @@ void DataSetView::setSelectionEnd(QModelIndex selectionEnd)
 	
 	Log::log() << "DataSetView::setSelectionEnd( row=" << selectionEnd.row() << ", col=" << selectionEnd.column() << " )" << std::endl;
 
-	_selectionEnd = selectionEnd;
+	_selectionEnd = _model->index(selectionEnd.row(), selectionEnd.column());;
 	emit selectionEndChanged(_selectionEnd);
 	
 	_selectionModel->select(QItemSelection(_selectionStart, _selectionEnd), QItemSelectionModel::ClearAndSelect);
@@ -1198,13 +1198,11 @@ void DataSetView::editFinished(QModelIndex here, QVariant editedValue)
 	setEditing(false);
 
 	if(oldValue.toString() != editedValue.toString())
-	{
-		_selectionStart = _model->index(-1, -1); //To stop setSelectionEnd from crashing everything
 		_model->setData(here, editedValue);
-	}
-
 
 	destroyEditItem();
+
+	_selectionStart = _model->index(_selectionStart.row(), _selectionStart.column()); //To stop setSelectionEnd from crashing everything
 }
 
 void DataSetView::onDataModeChanged(bool dataMode)
